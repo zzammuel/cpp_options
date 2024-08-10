@@ -1,6 +1,6 @@
 #include <iostream>
 #include <assert.h>
-#include <math.h>
+#include <cmath>
 
 #include "../../include/util/stats.hpp"
 #include "../../include/contracts/european.hpp"
@@ -9,8 +9,6 @@ European::European(OPTION_TYPE ot, double S, double p, double T, double K) : Con
 {
     assert((ot==CALL) | (ot==PUT));
     option_type = ot;
-    
-    std::cout << option_type << std::endl;
 };
 
 double European::payoff(double price)

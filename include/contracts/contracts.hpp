@@ -1,3 +1,7 @@
+#pragma once
+
+enum OPTION_TYPE {CALL = 1, PUT = -1};
+
 class Contract
 {
     protected:

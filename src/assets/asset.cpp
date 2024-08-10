@@ -51,3 +51,8 @@ double GeometricBrownianMotion::getPrice()
 {
     return price;
 }
+
+double GeometricBrownianMotion::getTimestep()
+{
+    return dt;
+}

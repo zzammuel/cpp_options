@@ -18,6 +18,7 @@ class GeometricBrownianMotion
         void printInfo();
 
         double getPrice();
+        double getTimestep();
 
         void nextPrice();
 };
