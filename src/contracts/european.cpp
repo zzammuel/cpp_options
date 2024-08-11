@@ -16,13 +16,15 @@ double European::payoff(double price)
     return std::max(0.0, option_type * (price - strike));
 }
 
-void European::CalculateFairPrice(double forward_rate, double volatility, bool use_imp_vol)
+double European::CalculateFairPrice(double forward_rate, double volatility, bool use_imp_vol)
 {
     /* The fairvalue is equal to:
     Call --> S * N(d1) - K * exp(-rT) * N(d2)
     Put  --> K * exp(-rT) * N(-d2) - S * N(-d1) */
     
-    current_value = option_type * (normalCDF(option_type * d1) * underlying_value - normalCDF(option_type * d2) * strike * std::exp(-forward_rate * expiry));
+    std::pair<double, double> dpair = CalculateD(forward_rate, volatility, use_imp_vol);
+    double newprice = option_type * (normalCDF(option_type * dpair.first) * underlying_value - normalCDF(option_type * dpair.second) * strike * std::exp(-forward_rate * expiry));
+    return newprice;
 }
 
 double European::CalculateDelta(double forward_rate, double volatility, bool use_imp_vol)
@@ -31,7 +33,8 @@ double European::CalculateDelta(double forward_rate, double volatility, bool use
     Call --> N(d1)
     Put  --> -N(-d1)*/
     
-    return option_type * normalCDF(option_type * d1);
+    std::pair<double, double> dpair = CalculateD(forward_rate, volatility, use_imp_vol);
+    return option_type * normalCDF(option_type * dpair.first);
 }
 
 double European::CalculateGamma(double forward_rate, double volatility, bool use_imp_vol)
@@ -42,7 +45,8 @@ double European::CalculateGamma(double forward_rate, double volatility, bool use
     double vol;
     vol = use_imp_vol ? implied_volatility : volatility;
         
-    return normalPDF(d1) / (underlying_value * vol * std::sqrt(expiry));
+    std::pair<double, double> dpair = CalculateD(forward_rate, volatility, use_imp_vol);
+    return normalPDF(dpair.first) / (underlying_value * vol * std::sqrt(expiry));
 }
 
 double European::CalculateVega(double forward_rate, double volatility, bool use_imp_vol)
@@ -50,6 +54,7 @@ double European::CalculateVega(double forward_rate, double volatility, bool use_
     /* The Vega is equal to:
     Call --> S * n(d1) * sqrt(T)
     Put  --> S * n(d1) * sqrt(T) */
-    
-    return underlying_value * std::sqrt(expiry) * normalPDF(d1);
+
+    std::pair<double, double> dpair = CalculateD(forward_rate, volatility, use_imp_vol);   
+    return underlying_value * std::sqrt(expiry) * normalPDF(dpair.first);
 }

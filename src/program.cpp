@@ -49,7 +49,18 @@ int main(int argc, char *argv[])
         cout << "Binary put:    " << binput.getPrice() << endl;
     }
     
-    std::cout << "Final price:                   " << price << endl;
+    cout <<     "Final price:   " << price << endl;
+
+    eucall.CalculateImpliedVolatility(7.0, r);
+    euput.CalculateImpliedVolatility(7.0, r);
+    bincall.CalculateImpliedVolatility(7.0, r);
+    binput.CalculateImpliedVolatility(7.0, r);
+
+    cout << "European call: " << eucall.getPrice() << endl;
+    cout << "European put:  " << euput.getImpliedVol() << endl;
+    cout << "Binary call:   " << bincall.getImpliedVol() << endl;
+    cout << "Binary put:    " << binput.getImpliedVol() << endl;
+    
     
     return 0;
 }

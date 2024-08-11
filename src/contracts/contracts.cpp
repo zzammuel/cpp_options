@@ -2,6 +2,7 @@
 #include <cmath>
 #include <stdexcept>
 
+#include "../../include/util/bisection.hpp"
 #include "../../include/contracts/contracts.hpp"
 
 Contract::Contract(double S, double p, double T, double K)
@@ -11,6 +12,8 @@ Contract::Contract(double S, double p, double T, double K)
     market_value = p;
     expiry = T;
     strike = K;
+
+    implied_volatility = 0.0;
 }
 
 double Contract::getPrice()
@@ -18,12 +21,17 @@ double Contract::getPrice()
     return current_value;
 }
 
+double Contract::getImpliedVol()
+{
+    return implied_volatility;
+}
+
 void Contract::ResolveContract()
 {
     
 }
 
-void Contract::CalculateD(double forward_rate, double volatility, bool use_imp_vol)
+std::pair<double, double> Contract::CalculateD(double forward_rate, double volatility, bool use_imp_vol)
 {
     double vol;
     vol = use_imp_vol ? implied_volatility : volatility;
@@ -32,6 +40,9 @@ void Contract::CalculateD(double forward_rate, double volatility, bool use_imp_v
     d1 /= (vol * std::sqrt(expiry));
     d2 = d1 - vol * std::sqrt(expiry);
 
+    std::pair dpair = {d1, d2};
+
+    return dpair;
 }
 
 double Contract::payoff(double price)
@@ -39,12 +50,14 @@ double Contract::payoff(double price)
     throw std::runtime_error("Function is not implemented!");
 }
 
-void Contract::CalculateImpliedVolatility()
+void Contract::CalculateImpliedVolatility(double quoted_price, double forward_rate)
 {
-    throw std::runtime_error("Function is not implemented!"); 
+    auto rootfunction = [this, forward_rate, quoted_price](double x){return CalculateFairPrice(forward_rate, x) - quoted_price;};
+
+    implied_volatility = bisection(rootfunction, 0.0, 2.0);
 }
 
-void Contract::CalculateFairPrice(double forward_rate, double volatility, bool use_imp_vol)
+double Contract::CalculateFairPrice(double forward_rate, double volatility, bool use_imp_vol)
 {
     throw std::runtime_error("Function is not implemented!");
 }
@@ -71,6 +84,5 @@ void Contract::ingest_new_point(double dt, double S, double forward_rate, double
 
     if (expiry <= 0){ResolveContract();}
 
-    CalculateD(forward_rate, volatility);
-    CalculateFairPrice(forward_rate, volatility);
+    current_value = CalculateFairPrice(forward_rate, volatility);
 }
