@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     bincall.CalculateImpliedVolatility(7.0, r);
     binput.CalculateImpliedVolatility(7.0, r);
 
-    cout << "European call: " << eucall.getPrice() << endl;
+    cout << "European call: " << eucall.getImpliedVol() << endl;
     cout << "European put:  " << euput.getImpliedVol() << endl;
     cout << "Binary call:   " << bincall.getImpliedVol() << endl;
     cout << "Binary put:    " << binput.getImpliedVol() << endl;

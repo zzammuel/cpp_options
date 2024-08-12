@@ -52,9 +52,14 @@ double Contract::payoff(double price)
 
 void Contract::CalculateImpliedVolatility(double quoted_price, double forward_rate)
 {
-    auto rootfunction = [this, forward_rate, quoted_price](double x){return CalculateFairPrice(forward_rate, x) - quoted_price;};
+    // auto rootfunction = [this, forward_rate, quoted_price](double x){return CalculateFairPrice(forward_rate, x) - quoted_price;};
 
-    implied_volatility = bisection(rootfunction, 0.0, 2.0);
+    auto vol = bisection(
+        [this, forward_rate, quoted_price](double x){return CalculateFairPrice(forward_rate, x) - quoted_price;},
+        0.0, 2.0
+    );
+
+    implied_volatility = vol;
 }
 
 double Contract::CalculateFairPrice(double forward_rate, double volatility, bool use_imp_vol)
