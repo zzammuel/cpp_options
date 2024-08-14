@@ -13,18 +13,21 @@ Binary::Binary(OPTION_TYPE ot, double S, double p, double T, double K) : Contrac
 
 double Binary::payoff(double price)
 {
-    if (strike < price) {return strike;}
+    /* Asset-or-nothing payout */
+    if (strike < price) {return price;}
     else {return 0;}
 }
 
 double Binary::CalculateFairPrice(double forward_rate, double volatility, bool use_imp_vol)
 {
-    /* The fairvalue is equal to:
-    Call --> exp(-rT) * N(d2)
-    Put  --> exp(-rT) * N(-d2) */
+    /* 
+    Asset-or-nothing payout
+    The fairvalue is equal to:
+    Call --> S * exp(-qT) * N(d2)
+    Put  --> S * exp(-qT) * N(-d2) */
 
     std::pair<double, double> dpair = CalculateD(forward_rate, volatility, use_imp_vol);
-    double newprice = std::exp(-forward_rate * expiry) * normalCDF(option_type * dpair.second);
+    double newprice = underlying_value * normalCDF(option_type * dpair.second);
     return newprice;
 }
 
