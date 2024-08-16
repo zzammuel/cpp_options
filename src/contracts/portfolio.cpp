@@ -1,3 +1,6 @@
+#include <execution>
+#include <algorithm>
+
 #include "../../include/contracts/portfolio.hpp"
 
 Portfolio::Portfolio(){
@@ -6,7 +9,7 @@ Portfolio::Portfolio(){
 }
 
 void Portfolio::ingest_new_point(double dt, double S, double forward_rate, double volatility){
-    for (int i=0; i<contracts.size(); ++i){
+    for (int i=0; i<contracts.size(); i++){
         contracts[i]->ingest_new_point(dt, S, forward_rate, volatility);
     }
 }
@@ -14,9 +17,13 @@ void Portfolio::ingest_new_point(double dt, double S, double forward_rate, doubl
 double Portfolio::get_portfolio_value(){
     double portfolio_value = 0.0;
 
-    for (int i=0; i<contracts.size(); ++i){
-        portfolio_value += contracts[i]->getPrice();
-    }
+    // for (int i=0; i<contracts.size(); ++i){
+    //     portfolio_value += contracts[i]->getPrice();
+    // }
+
+    for_each(execution::par, contracts.begin(), contracts.end(), [&portfolio_value](shared_ptr<Contract> c){
+        portfolio_value += c->getPrice();
+    });
 
     return portfolio_value;
 }
