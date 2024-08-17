@@ -12,7 +12,6 @@ class Contract
         double expiry; // Time until the contract expires
         double strike; // The strike price of the contract
 
-        double d1, d2;
         double implied_volatility;
 
         void ResolveContract();
@@ -24,6 +23,9 @@ class Contract
         Contract(double p, double T, double K);
 
         double getPrice();
+        double getDelta();
+        double getGamma();
+        double getVega();
         double getImpliedVol();
 
         void CalculateImpliedVolatility(double underlying_value, double quoted_price, double forward_rate);

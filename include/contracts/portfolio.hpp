@@ -18,4 +18,7 @@ class Portfolio{
         void ingest_new_point(double dt, double S, double forward_rate, double volatility);
 
         double get_portfolio_value();
+        double get_portfolio_delta();
+        double get_portfolio_gamma();
+        double get_portfolio_vega();
 };

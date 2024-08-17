@@ -47,8 +47,10 @@ int main(int argc, char *argv[])
         portfolio.ingest_new_point(dt, price, r, vol);
 
         cout << "price=           " << price << endl;
-        cout << "Portfolio value= " << portfolio.get_portfolio_value() << endl;
-        cout << "Portfolio delta= " << portfolio.get_portfolio_delta() << endl;
+        cout << "Portfolio value= " << portfolio.get_portfolio_value() << ", ";
+        cout << "Portfolio delta= " << portfolio.get_portfolio_delta() << ", ";
+        cout << "Portfolio gamma= " << portfolio.get_portfolio_gamma() << ", ";
+        cout << "Portfolio vega=  " << portfolio.get_portfolio_vega() << endl;
     }
     
     cout <<     "Final price:   " << price << endl;

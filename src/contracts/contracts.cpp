@@ -20,6 +20,21 @@ double Contract::getPrice()
     return value;
 }
 
+double Contract::getDelta()
+{
+    return delta;
+}
+
+double Contract::getGamma()
+{
+    return gamma;
+}
+
+double Contract::getVega()
+{
+    return vega;
+}
+
 double Contract::getImpliedVol()
 {
     return implied_volatility;
@@ -35,6 +50,7 @@ std::pair<double, double> Contract::CalculateD(double underlying_value, double f
     double vol;
     vol = use_imp_vol ? implied_volatility : volatility;
 
+    double d1, d2;
     d1 = std::log(underlying_value / strike) + (forward_rate + vol * vol / 2.0) * expiry;
     d1 /= (vol * std::sqrt(expiry));
     d2 = d1 - vol * std::sqrt(expiry);

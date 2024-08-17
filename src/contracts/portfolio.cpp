@@ -28,6 +28,36 @@ double Portfolio::get_portfolio_value(){
     return portfolio_value;
 }
 
+double Portfolio::get_portfolio_delta(){
+    double portfolio_delta = 0.0;
+
+    for_each(execution::par, contracts.begin(), contracts.end(), [&portfolio_delta](shared_ptr<Contract> c){
+        portfolio_delta += c->getDelta();
+    });
+
+    return portfolio_delta;
+};
+
+double Portfolio::get_portfolio_gamma(){
+    double portfolio_gamma = 0.0;
+
+    for_each(execution::par, contracts.begin(), contracts.end(), [&portfolio_gamma](shared_ptr<Contract> c){
+        portfolio_gamma += c->getGamma();
+    });
+
+    return portfolio_gamma;
+}
+
+double Portfolio::get_portfolio_vega(){
+    double portfolio_vega = 0.0;
+
+    for_each(execution::par, contracts.begin(), contracts.end(), [&portfolio_vega](shared_ptr<Contract> c){
+        portfolio_vega += c->getVega();
+    });
+
+    return portfolio_vega;
+}
+
 void Portfolio::add_contract(shared_ptr<Contract> cntrct){
     contracts.push_back(cntrct);
     nr_contracts_held++;

@@ -22,7 +22,7 @@ double European::CalculateFairPrice(double underlying_value, double forward_rate
     Call --> S * N(d1) - K * exp(-rT) * N(d2)
     Put  --> K * exp(-rT) * N(-d2) - S * N(-d1) */
     
-    std::pair<double, double> dpair = CalculateD(forward_rate, volatility, use_imp_vol);
+    std::pair<double, double> dpair = CalculateD(underlying_value, forward_rate, volatility, use_imp_vol);
     double newprice = option_type * (normalCDF(option_type * dpair.first) * underlying_value - normalCDF(option_type * dpair.second) * strike * std::exp(-forward_rate * expiry));
     return newprice;
 }
@@ -33,7 +33,7 @@ double European::CalculateDelta(double underlying_value, double forward_rate, do
     Call --> N(d1)
     Put  --> -N(-d1)*/
     
-    std::pair<double, double> dpair = CalculateD(forward_rate, volatility, use_imp_vol);
+    std::pair<double, double> dpair = CalculateD(underlying_value, forward_rate, volatility, use_imp_vol);
     return option_type * normalCDF(option_type * dpair.first);
 }
 
@@ -45,7 +45,7 @@ double European::CalculateGamma(double underlying_value, double forward_rate, do
     double vol;
     vol = use_imp_vol ? implied_volatility : volatility;
         
-    std::pair<double, double> dpair = CalculateD(forward_rate, volatility, use_imp_vol);
+    std::pair<double, double> dpair = CalculateD(underlying_value, forward_rate, volatility, use_imp_vol);
     return normalPDF(dpair.first) / (underlying_value * vol * std::sqrt(expiry));
 }
 
@@ -55,6 +55,6 @@ double European::CalculateVega(double underlying_value, double forward_rate, dou
     Call --> S * n(d1) * sqrt(T)
     Put  --> S * n(d1) * sqrt(T) */
 
-    std::pair<double, double> dpair = CalculateD(forward_rate, volatility, use_imp_vol);   
+    std::pair<double, double> dpair = CalculateD(underlying_value, forward_rate, volatility, use_imp_vol);   
     return underlying_value * std::sqrt(expiry) * normalPDF(dpair.first);
 }
