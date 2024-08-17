@@ -6,12 +6,12 @@ class Binary : public Contract
         OPTION_TYPE option_type;
 
     public:
-        Binary(OPTION_TYPE ot, double S, double p, double T, double K);
+        Binary(OPTION_TYPE ot, double p, double T, double K);
 
         double payoff(double price) override;
 
-        double CalculateFairPrice(double forward_rate, double volatility, bool use_imp_vol = false) override;
-        double CalculateDelta(double forward_rate, double volatility, bool use_imp_vol = false) override;
-        double CalculateGamma(double forward_rate, double volatility, bool use_imp_vol = false) override;
-        double CalculateVega(double forward_rate, double volatility, bool use_imp_vol = false) override;
+        double CalculateFairPrice(double underlying_value, double forward_rate, double volatility, bool use_imp_vol = false) override;
+        double CalculateDelta(double underlying_value, double forward_rate, double volatility, bool use_imp_vol = false) override;
+        double CalculateGamma(double underlying_value, double forward_rate, double volatility, bool use_imp_vol = false) override;
+        double CalculateVega(double underlying_value, double forward_rate, double volatility, bool use_imp_vol = false) override;
 };

@@ -5,10 +5,9 @@
 #include "../../include/util/bisection.hpp"
 #include "../../include/contracts/contracts.hpp"
 
-Contract::Contract(double S, double p, double T, double K)
+Contract::Contract(double p, double T, double K)
 {
-    underlying_value = S;
-    current_value = p;
+    value = p;
     market_value = p;
     expiry = T;
     strike = K;
@@ -18,7 +17,7 @@ Contract::Contract(double S, double p, double T, double K)
 
 double Contract::getPrice()
 {
-    return current_value;
+    return value;
 }
 
 double Contract::getImpliedVol()
@@ -31,7 +30,7 @@ void Contract::ResolveContract()
     
 }
 
-std::pair<double, double> Contract::CalculateD(double forward_rate, double volatility, bool use_imp_vol)
+std::pair<double, double> Contract::CalculateD(double underlying_value, double forward_rate, double volatility, bool use_imp_vol)
 {
     double vol;
     vol = use_imp_vol ? implied_volatility : volatility;
@@ -50,44 +49,46 @@ double Contract::payoff(double price)
     throw std::runtime_error("Function is not implemented!");
 }
 
-void Contract::CalculateImpliedVolatility(double quoted_price, double forward_rate)
+void Contract::CalculateImpliedVolatility(double quoted_price, double underlying_value, double forward_rate)
 {
     // auto rootfunction = [this, forward_rate, quoted_price](double x){return CalculateFairPrice(forward_rate, x) - quoted_price;};
 
     auto vol = bisection(
-        [this, forward_rate, quoted_price](double x){return CalculateFairPrice(forward_rate, x) - quoted_price;},
+        [this, underlying_value, forward_rate, quoted_price](double x){return CalculateFairPrice(underlying_value, forward_rate, x) - quoted_price;},
         0.0, 2.0
     );
 
     implied_volatility = vol;
 }
 
-double Contract::CalculateFairPrice(double forward_rate, double volatility, bool use_imp_vol)
+double Contract::CalculateFairPrice(double underlying_value, double forward_rate, double volatility, bool use_imp_vol)
 {
     throw std::runtime_error("Function is not implemented!");
 }
 
-double Contract::CalculateDelta(double forward_rate, double volatility, bool use_imp_vol)
+double Contract::CalculateDelta(double underlying_value, double forward_rate, double volatility, bool use_imp_vol)
 {
     throw std::runtime_error("Function is not implemented!");
 }
 
-double Contract::CalculateGamma(double forward_rate, double volatility, bool use_imp_vol)
+double Contract::CalculateGamma(double underlying_value, double forward_rate, double volatility, bool use_imp_vol)
 {
     throw std::runtime_error("Function is not implemented!");
 }
 
-double Contract::CalculateVega(double forward_rate, double volatility, bool use_imp_vol)
+double Contract::CalculateVega(double underlying_value, double forward_rate, double volatility, bool use_imp_vol)
 {
     throw std::runtime_error("Function is not implemented!");
 }
 
 void Contract::ingest_new_point(double dt, double S, double forward_rate, double volatility)
 {
-    underlying_value = S;
     expiry -= dt;
 
     if (expiry <= 0){ResolveContract();}
 
-    current_value = CalculateFairPrice(forward_rate, volatility);
+    value = CalculateFairPrice(S, forward_rate, volatility);
+    delta = CalculateDelta(S, forward_rate, volatility);
+    gamma = CalculateGamma(S, forward_rate, volatility);
+    vega = CalculateVega(S, forward_rate, volatility);
 }

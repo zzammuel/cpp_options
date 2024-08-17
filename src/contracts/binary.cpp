@@ -5,7 +5,7 @@
 #include "../../include/contracts/binary.hpp"
 #include "../../include/util/stats.hpp"
 
-Binary::Binary(OPTION_TYPE ot, double S, double p, double T, double K) : Contract(S, p, T, K)
+Binary::Binary(OPTION_TYPE ot, double p, double T, double K) : Contract(p, T, K)
 {
     assert((ot==CALL) | (ot==PUT));
     option_type = ot;
@@ -18,7 +18,7 @@ double Binary::payoff(double price)
     else {return 0;}
 }
 
-double Binary::CalculateFairPrice(double forward_rate, double volatility, bool use_imp_vol)
+double Binary::CalculateFairPrice(double underlying_value, double forward_rate, double volatility, bool use_imp_vol)
 {
     /* 
     Asset-or-nothing payout
@@ -31,7 +31,7 @@ double Binary::CalculateFairPrice(double forward_rate, double volatility, bool u
     return newprice;
 }
 
-double Binary::CalculateDelta(double forward_rate, double volatility, bool use_imp_vol)
+double Binary::CalculateDelta(double underlying_value, double forward_rate, double volatility, bool use_imp_vol)
 {
 
     double vol;
@@ -41,7 +41,7 @@ double Binary::CalculateDelta(double forward_rate, double volatility, bool use_i
     return std::exp(-forward_rate * expiry) * normalPDF(option_type * dpair.second) / (underlying_value * vol * std::sqrt(expiry));
 };
 
-double Binary::CalculateGamma(double forward_rate, double volatility, bool use_imp_vol)
+double Binary::CalculateGamma(double underlying_value, double forward_rate, double volatility, bool use_imp_vol)
 {
     double vol;
     vol = use_imp_vol ? implied_volatility : volatility;
@@ -50,7 +50,7 @@ double Binary::CalculateGamma(double forward_rate, double volatility, bool use_i
     return std::exp(-forward_rate * expiry) * d1 * normalPDF(option_type * dpair.second) / (underlying_value * underlying_value * vol * vol * expiry);
 };
 
-double Binary::CalculateVega(double forward_rate, double volatility, bool use_imp_vol)
+double Binary::CalculateVega(double underlying_value, double forward_rate, double volatility, bool use_imp_vol)
 {
     double vol;
     vol = use_imp_vol ? implied_volatility : volatility;

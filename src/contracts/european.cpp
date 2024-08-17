@@ -5,7 +5,7 @@
 #include "../../include/util/stats.hpp"
 #include "../../include/contracts/european.hpp"
 
-European::European(OPTION_TYPE ot, double S, double p, double T, double K) : Contract(S, p, T, K)
+European::European(OPTION_TYPE ot, double p, double T, double K) : Contract(p, T, K)
 {
     assert((ot==CALL) | (ot==PUT));
     option_type = ot;
@@ -16,7 +16,7 @@ double European::payoff(double price)
     return std::max(0.0, option_type * (price - strike));
 }
 
-double European::CalculateFairPrice(double forward_rate, double volatility, bool use_imp_vol)
+double European::CalculateFairPrice(double underlying_value, double forward_rate, double volatility, bool use_imp_vol)
 {
     /* The fairvalue is equal to:
     Call --> S * N(d1) - K * exp(-rT) * N(d2)
@@ -27,7 +27,7 @@ double European::CalculateFairPrice(double forward_rate, double volatility, bool
     return newprice;
 }
 
-double European::CalculateDelta(double forward_rate, double volatility, bool use_imp_vol)
+double European::CalculateDelta(double underlying_value, double forward_rate, double volatility, bool use_imp_vol)
 {
     /* The Delta is equal to:
     Call --> N(d1)
@@ -37,7 +37,7 @@ double European::CalculateDelta(double forward_rate, double volatility, bool use
     return option_type * normalCDF(option_type * dpair.first);
 }
 
-double European::CalculateGamma(double forward_rate, double volatility, bool use_imp_vol)
+double European::CalculateGamma(double underlying_value, double forward_rate, double volatility, bool use_imp_vol)
 {
     /* The Gamma is equal to
     Call --> n(d1) / (S * vol * sqrt(T))
@@ -49,7 +49,7 @@ double European::CalculateGamma(double forward_rate, double volatility, bool use
     return normalPDF(dpair.first) / (underlying_value * vol * std::sqrt(expiry));
 }
 
-double European::CalculateVega(double forward_rate, double volatility, bool use_imp_vol)
+double European::CalculateVega(double underlying_value, double forward_rate, double volatility, bool use_imp_vol)
 {
     /* The Vega is equal to:
     Call --> S * n(d1) * sqrt(T)

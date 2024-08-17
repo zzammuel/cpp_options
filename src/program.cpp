@@ -33,10 +33,10 @@ int main(int argc, char *argv[])
     // Binary binput = Binary(OPTION_TYPE::PUT, s0, 0.0, 1.0, K);
 
     Portfolio portfolio = Portfolio();
-    portfolio.add_contract(shared_ptr<Contract> (new European(OPTION_TYPE::CALL, s0, 6.0, 1.0, K)));
-    portfolio.add_contract(shared_ptr<Contract> (new European(OPTION_TYPE::PUT, s0, 6.0, 1.0, K)));
-    portfolio.add_contract(shared_ptr<Contract> (new Binary(OPTION_TYPE::CALL, s0, 0.0, 1.0, K)));
-    portfolio.add_contract(shared_ptr<Contract> (new Binary(OPTION_TYPE::PUT, s0, 0.0, 1.0, K)));
+    portfolio.add_contract(shared_ptr<Contract> (new European(OPTION_TYPE::CALL, 6.0, 1.0, K)));
+    portfolio.add_contract(shared_ptr<Contract> (new European(OPTION_TYPE::PUT, 6.0, 1.0, K)));
+    portfolio.add_contract(shared_ptr<Contract> (new Binary(OPTION_TYPE::CALL, 0.0, 1.0, K)));
+    portfolio.add_contract(shared_ptr<Contract> (new Binary(OPTION_TYPE::PUT, 0.0, 1.0, K)));
 
     double price;
     for(int i=0; i<36; i++) //5 * 24 * 60
@@ -46,17 +46,9 @@ int main(int argc, char *argv[])
 
         portfolio.ingest_new_point(dt, price, r, vol);
 
-        // eucall.ingest_new_point(dt, price, r, vol);
-        // euput.ingest_new_point(dt, price, r, vol);
-        // bincall.ingest_new_point(dt, price, r, vol);
-        // binput.ingest_new_point(dt, price, r, vol);
-
-        cout << "price=" << price << ". r=" << r << ". vol=" << vol << endl;
-        cout << "Portfolio: " << portfolio.get_portfolio_value() << endl;
-        // cout << "European call: " << eucall.getPrice() << endl;
-        // cout << "European put:  " << euput.getPrice() << endl;
-        // cout << "Binary call:   " << bincall.getPrice() << endl;
-        // cout << "Binary put:    " << binput.getPrice() << endl;
+        cout << "price=           " << price << endl;
+        cout << "Portfolio value= " << portfolio.get_portfolio_value() << endl;
+        cout << "Portfolio delta= " << portfolio.get_portfolio_delta() << endl;
     }
     
     cout <<     "Final price:   " << price << endl;
