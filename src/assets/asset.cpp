@@ -4,6 +4,26 @@
 
 using namespace std;
 
+Asset::Asset(double p, double q){
+    price = p;
+    quantity = q;
+}
+
+double Asset::getPrice(){
+    return price * quantity;
+}
+
+double Asset::getDelta(){
+    return 1.0 * quantity;
+}
+
+void Asset::buyAsset(double newquantity){
+    double diff = newquantity - quantity;
+    quantity = newquantity;
+
+    // C->add_cash(diff);
+}
+
 GeometricBrownianMotion::GeometricBrownianMotion(double r, double vol, double p0, int freq)
 {
     forward_rate = r;

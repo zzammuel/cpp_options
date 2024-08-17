@@ -1,8 +1,26 @@
+#pragma once
+
 #include <random>
+
+#include "../contracts/portfolio.hpp"
 
 using namespace std;
 
 enum FREQUENCY {SECOND, MINUTE, HOUR, DAY, YEAR};
+
+class Asset
+{
+    private:
+        double price;
+        double quantity;
+    public:
+        Asset(double p, double q);
+        
+        double getPrice();
+        double getDelta();
+
+        void buyAsset(double newquantity);
+};
 
 class GeometricBrownianMotion
 {

@@ -6,6 +6,12 @@
 Portfolio::Portfolio(){
     contracts = vector<shared_ptr<Contract>> {};
     nr_contracts_held = 0;
+
+    cash = 0.0;
+}
+
+void Portfolio::add_cash(double amt){
+    cash += amt;
 }
 
 void Portfolio::ingest_new_point(double dt, double S, double forward_rate, double volatility){
@@ -14,7 +20,7 @@ void Portfolio::ingest_new_point(double dt, double S, double forward_rate, doubl
     }
 }
 
-double Portfolio::get_portfolio_value(){
+double Portfolio::get_portfolio_value(bool include_cash){
     double portfolio_value = 0.0;
 
     // for (int i=0; i<contracts.size(); ++i){
@@ -25,7 +31,8 @@ double Portfolio::get_portfolio_value(){
         portfolio_value += c->getPrice();
     });
 
-    return portfolio_value;
+    if (include_cash) {return portfolio_value + cash;}
+    else {return portfolio_value;}
 }
 
 double Portfolio::get_portfolio_delta(){
@@ -58,7 +65,9 @@ double Portfolio::get_portfolio_vega(){
     return portfolio_vega;
 }
 
-void Portfolio::add_contract(shared_ptr<Contract> cntrct){
+void Portfolio::add_contract(shared_ptr<Contract> cntrct, double underlying_value, double forward_rate, double volatility){
+    cash -= cntrct->CalculateFairPrice(underlying_value, forward_rate, volatility);
+
     contracts.push_back(cntrct);
     nr_contracts_held++;
 }
